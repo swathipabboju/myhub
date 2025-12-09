@@ -4,39 +4,56 @@ import '../widgets/animated_loader.dart';
 import '../utils/responsive.dart';
 import 'signin_screen.dart';
 
-class OnboardingScreen extends StatelessWidget {
+class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  bool isLoading = false;
+
+  void _onLetsGoPressed() async {
+    setState(() {
+      isLoading = true; // Show loader
+    });
+
+    // Simulate loading time
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    // Navigate to SignInScreen after loader
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const SignInScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        bottom: true,
-        child: Stack(
-          children: [
-            // Background animator filling the whole screen (reusable)
-            Positioned.fill(
-              child: BackgroundAnimator(
-                // uses default folderName 'assets/background' and bg1..bg4.png
-                frameDuration: const Duration(milliseconds: 400),
-                expand: true,
-                fit: BoxFit.cover,
-              ),
+      body: Stack(
+        children: [
+          // Background animator filling the whole screen
+          Positioned.fill(
+            child: BackgroundAnimator(
+              frameDuration: const Duration(milliseconds: 400),
+              expand: true,
+              fit: BoxFit.cover,
             ),
+          ),
 
-            // Foreground content
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 20.0,
-              ),
+          // Foreground content
+          SafeArea(
+            bottom: true,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
               child: Column(
                 children: [
-                  // Spacer where artwork would sit
                   SizedBox(height: Responsive.hp(context, 0.52)),
 
-                  // Title
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -52,7 +69,6 @@ class OnboardingScreen extends StatelessWidget {
 
                   SizedBox(height: Responsive.scale(context, 18)),
 
-                  // Subtitle lines
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Column(
@@ -85,40 +101,13 @@ class OnboardingScreen extends StatelessWidget {
                     ),
                   ),
 
-                  Spacer(),
+                  const Spacer(),
 
-                  // CTA button
                   SizedBox(
                     width: double.infinity,
                     height: Responsive.scale(context, 58),
                     child: ElevatedButton(
-                      onPressed: () async {
-                        // show full-screen loader dialog
-                        Navigator.of(context).push(
-                          PageRouteBuilder(
-                            opaque: false,
-                            pageBuilder: (_, __, ___) => const AnimatedLoader(
-                              fullScreen: true,
-                              frameDuration: Duration(milliseconds: 1000),
-                            ),
-                          ),
-                        );
-
-                        // simulate loading time — wait until assets are visible then navigate
-                        await Future.delayed(
-                          const Duration(milliseconds: 2000),
-                        );
-
-                        // remove loader
-                        if (Navigator.canPop(context)) Navigator.pop(context);
-
-                        // navigate to sign-in screen
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const SignInScreen(),
-                          ),
-                        );
-                      },
+                      onPressed: _onLetsGoPressed,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1E77C9),
                         shape: RoundedRectangleBorder(
@@ -140,8 +129,17 @@ class OnboardingScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+
+          // Full-screen loader overlay
+          if (isLoading)
+            Positioned.fill(
+              child: AnimatedLoader(
+                fullScreen: true,
+                frameDuration: const Duration(milliseconds: 500),
+              ),
+            ),
+        ],
       ),
     );
   }

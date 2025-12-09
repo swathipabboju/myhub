@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../widgets/background_animator.dart';
 // animated loader not used on this screen
 import '../utils/responsive.dart';
@@ -63,11 +64,20 @@ class _SignInScreenState extends State<SignInScreen> {
         child: Stack(
           children: [
             // animated background
-            Positioned.fill(child: BackgroundAnimator(frameDuration: const Duration(milliseconds: 400), expand: true, fit: BoxFit.cover)),
+            Positioned.fill(
+              child: BackgroundAnimator(
+                frameDuration: const Duration(milliseconds: 400),
+                expand: true,
+                fit: BoxFit.cover,
+              ),
+            ),
 
             // foreground content
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 20.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -75,24 +85,52 @@ class _SignInScreenState extends State<SignInScreen> {
 
                   Text(
                     'Sign in\nto continue',
-                    style: TextStyle(fontSize: Responsive.scale(context, 44), fontWeight: FontWeight.w800, height: 1.02, color: Colors.black),
+                    style: TextStyle(
+                      fontSize: Responsive.scale(context, 44),
+                      fontWeight: FontWeight.w800,
+                      height: 1.02,
+                      color: Colors.black,
+                    ),
                   ),
                   SizedBox(height: Responsive.scale(context, 12)),
-                  Text('Enter your mobile number to proceed', style: TextStyle(fontSize: Responsive.scale(context, 16), color: const Color(0xFF6D6D6D))),
+                  Text(
+                    'Enter your mobile number to proceed',
+                    style: TextStyle(
+                      fontSize: Responsive.scale(context, 16),
+                      color: const Color(0xFF6D6D6D),
+                    ),
+                  ),
                   SizedBox(height: Responsive.scale(context, 26)),
 
-                  Text('Mobile Number', style: TextStyle(fontSize: Responsive.scale(context, 16), color: Colors.black87)),
+                  Text(
+                    'Mobile Number',
+                    style: TextStyle(
+                      fontSize: Responsive.scale(context, 16),
+                      color: Colors.black87,
+                    ),
+                  ),
                   SizedBox(height: Responsive.scale(context, 10)),
                   TextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    maxLength: 10,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly, // digits only
+                    ],
                     decoration: InputDecoration(
                       hintText: 'e.g. +91 9012XXXXXX',
                       hintStyle: TextStyle(color: Colors.grey.shade400),
                       filled: true,
+
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide(color: Colors.grey.shade300)),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 18,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
                     ),
                   ),
 
@@ -105,32 +143,58 @@ class _SignInScreenState extends State<SignInScreen> {
                           ? () {
                               // navigate to Verify screen
                               Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => VerifyScreen(phone: _phoneController.text.trim())),
+                                MaterialPageRoute(
+                                  builder: (_) => VerifyScreen(
+                                    phone: _phoneController.text.trim(),
+                                  ),
+                                ),
                               );
                             }
                           : null,
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.disabled)) return Colors.grey.shade300;
+                        backgroundColor: MaterialStateProperty.resolveWith((
+                          states,
+                        ) {
+                          if (states.contains(MaterialState.disabled))
+                            return Colors.grey.shade300;
                           return const Color(0xFF1E77C9);
                         }),
-                        foregroundColor: MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.disabled)) return Colors.grey.shade600;
+                        foregroundColor: MaterialStateProperty.resolveWith((
+                          states,
+                        ) {
+                          if (states.contains(MaterialState.disabled))
+                            return Colors.grey.shade600;
                           return Colors.white;
                         }),
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0))),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
                       ),
-                      child: Text('Continue', style: TextStyle(fontSize: Responsive.scale(context, 18))),
+                      child: Text(
+                        'Continue',
+                        style: TextStyle(
+                          fontSize: Responsive.scale(context, 18),
+                        ),
+                      ),
                     ),
                   ),
 
                   const Spacer(),
 
-                  Row(children: const [
-                    Icon(Icons.info_outline, color: Color(0xFFB3B3B3)),
-                    SizedBox(width: 12),
-                    Expanded(child: Text('Your number stays private and is never shared', style: TextStyle(color: Color(0xFF8F8F8F)))),
-                  ])
+                  Row(
+                    children: const [
+                      Icon(Icons.info_outline, color: Color(0xFFB3B3B3)),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Your number stays private and is never shared',
+                          style: TextStyle(color: Color(0xFF8F8F8F)),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
