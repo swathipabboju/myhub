@@ -9,8 +9,6 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -29,7 +27,10 @@ class OnboardingScreen extends StatelessWidget {
 
             // Foreground content
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 20.0,
+              ),
               child: Column(
                 children: [
                   // Spacer where artwork would sit
@@ -57,11 +58,29 @@ class OnboardingScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Search smarter', style: TextStyle(fontSize: Responsive.scale(context, 18), color: const Color(0xFF6D6D6D))),
+                        Text(
+                          'Search smarter',
+                          style: TextStyle(
+                            fontSize: Responsive.scale(context, 18),
+                            color: const Color(0xFF6D6D6D),
+                          ),
+                        ),
                         const SizedBox(height: 6),
-                        Text('Order faster', style: TextStyle(fontSize: Responsive.scale(context, 18), color: const Color(0xFF6D6D6D))),
+                        Text(
+                          'Order faster',
+                          style: TextStyle(
+                            fontSize: Responsive.scale(context, 18),
+                            color: const Color(0xFF6D6D6D),
+                          ),
+                        ),
                         const SizedBox(height: 6),
-                        Text('Book anything with AI', style: TextStyle(fontSize: Responsive.scale(context, 18), color: const Color(0xFF6D6D6D))),
+                        Text(
+                          'Book anything with AI',
+                          style: TextStyle(
+                            fontSize: Responsive.scale(context, 18),
+                            color: const Color(0xFF6D6D6D),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -75,34 +94,45 @@ class OnboardingScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         // show full-screen loader dialog
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (_) => Material(
-                            color: Colors.transparent,
-                            child: Center(
-                              child: AnimatedLoader(fullScreen: true, frameDuration: const Duration(milliseconds: 200)),
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            opaque: false,
+                            pageBuilder: (_, __, ___) => const AnimatedLoader(
+                              fullScreen: true,
+                              frameDuration: Duration(milliseconds: 1000),
                             ),
                           ),
                         );
 
                         // simulate loading time — wait until assets are visible then navigate
-                        await Future.delayed(const Duration(milliseconds: 800));
+                        await Future.delayed(
+                          const Duration(milliseconds: 2000),
+                        );
 
                         // remove loader
                         if (Navigator.canPop(context)) Navigator.pop(context);
 
                         // navigate to sign-in screen
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const SignInScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const SignInScreen(),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1E77C9),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32.0),
+                        ),
                         elevation: 2,
                       ),
-                      child: Text("Let's Go", style: TextStyle(fontSize: Responsive.scale(context, 18), color: Colors.white)),
+                      child: Text(
+                        "Let's Go",
+                        style: TextStyle(
+                          fontSize: Responsive.scale(context, 18),
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
 
@@ -116,4 +146,3 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 }
-

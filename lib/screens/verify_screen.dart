@@ -205,7 +205,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                   ? () {
                                       Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
-                                          builder: (_) => const MyHubHome(),
+                                          builder: (_) =>  MyHubHome(),
                                         ),
                                       );
                                     }

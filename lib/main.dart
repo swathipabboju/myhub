@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'widgets/animated_loader.dart';
 import 'screens/onboarding_screen.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const OnboardingScreen(),
+      home: const OnboardingScreen()
     );
   }
 }
@@ -108,7 +107,10 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const SizedBox(height: 24),
-            AnimatedLoader(size: 96, frameDuration: Duration(milliseconds: 120)),
+            AnimatedLoader(
+              size: 96,
+              frameDuration: Duration(milliseconds: 120),
+            ),
             const SizedBox(height: 24),
             const Text('You have pushed the button this many times:'),
             Text(
