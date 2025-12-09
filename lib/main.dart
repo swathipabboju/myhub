@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'widgets/animated_loader.dart';
+import 'screens/onboarding_screen.dart';
 
 
 void main() {
@@ -32,9 +33,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: Scaffold(
-        body:  AnimatedLoader(fullScreen: true, frameDuration: Duration(milliseconds: 500)),
-      ),
+      home: const OnboardingScreen(),
     );
   }
 }
