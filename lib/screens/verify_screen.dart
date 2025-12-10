@@ -40,33 +40,18 @@ class _VerifyScreenState extends State<VerifyScreen> {
   String _currentOtp() => _controllers.map((c) => c.text).join();
   bool get _isValid => _currentOtp().replaceAll(RegExp(r'\D'), '').length == 6;
 
-  void _onDigitChanged(String value, int index) {
-    if (value.length > 1) {
-      final chars = value.replaceAll(RegExp(r'\D'), '').split('');
-      for (
-        var i = 0;
-        i < chars.length && index + i < _controllers.length;
-        i++
-      ) {
-        _controllers[index + i].text = chars[i];
-      }
-      final next = index + chars.length;
-      if (next < _focusNodes.length) {
-        FocusScope.of(context).requestFocus(_focusNodes[next]);
+  String get otp => _controllers.map((c) => c.text).join();
+  bool get isOtpValid => otp.length == 6;
+
+  void onDigitChanged(String value, int index) {
+    if (value.isNotEmpty) {
+      if (index < _focusNodes.length - 1) {
+        _focusNodes[index + 1].requestFocus();
       } else {
         FocusScope.of(context).unfocus();
       }
-      setState(() {});
-      return;
-    }
-
-    if (value.isNotEmpty) {
-      final next = index + 1;
-      if (next < _focusNodes.length)
-        FocusScope.of(context).requestFocus(_focusNodes[next]);
     } else {
-      final prev = index - 1;
-      if (prev >= 0) FocusScope.of(context).requestFocus(_focusNodes[prev]);
+      if (index > 0) _focusNodes[index - 1].requestFocus();
     }
     setState(() {});
   }
@@ -90,11 +75,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
         child: Stack(
           children: [
             const Positioned.fill(
-              child: BackgroundAnimator(
-                frameDuration: Duration(milliseconds: 400),
-                expand: true,
-                fit: BoxFit.cover,
-              ),
+              child: BackgroundAnimator()
             ),
             SingleChildScrollView(
               padding: const EdgeInsets.symmetric(
@@ -108,92 +89,102 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 child: IntrinsicHeight(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: Responsive.hp(context, 0.05)),
-                          Text(
-                            'Verify\nyour number',
-                            style: TextStyle(
-                              fontSize: Responsive.scale(context, 44),
-                              fontWeight: FontWeight.w800,
-                              height: 1.02,
-                            ),
-                          ),
-                          SizedBox(height: Responsive.scale(context, 12)),
-                          Text(
-                            "We've sent a 6-digit code to ${widget.phone}",
-                            style: TextStyle(
-                              fontSize: Responsive.scale(context, 16),
-                              color: const Color(0xFF6D6D6D),
-                            ),
-                          ),
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: Responsive.hp(context, 0.05)),
 
-                          const SizedBox(height: 28),
+                              Text(
+                                'Verify\nyour number',
+                                style: TextStyle(
+                                  fontSize: Responsive.scale(context, 44),
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.02,
+                                ),
+                              ),
 
-                          Center(
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(6, (i) {
-                                    return Flexible(
-                                      child: Container(
-                                        margin: EdgeInsets.symmetric(
-                                          horizontal: gap / 2,
-                                        ),
-                                        width: fieldSize,
-                                        height: fieldSize,
-                                        child: TextField(
-                                          controller: _controllers[i],
-                                          focusNode: _focusNodes[i],
-                                          keyboardType: TextInputType.number,
-                                          textAlign: TextAlign.center,
-                                          maxLength: 1,
-                                          style: TextStyle(
-                                            fontSize: Responsive.scale(
-                                              context,
-                                              20,
+                              SizedBox(height: Responsive.scale(context, 12)),
+
+                              Text(
+                                "We've sent a 6-digit code to ${widget.phone}",
+                                style: TextStyle(
+                                  fontSize: Responsive.scale(context, 16),
+                                  color: const Color(0xFF6D6D6D),
+                                ),
+                              ),
+
+                              const SizedBox(height: 28),
+
+                              Center(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: List.generate(6, (i) {
+                                        return Flexible(
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                              horizontal: gap / 2,
                                             ),
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          decoration: InputDecoration(
-                                            counterText: '',
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            contentPadding: EdgeInsets.zero,
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                12,
+                                            width: fieldSize,
+                                            height: fieldSize,
+                                            child: TextField(
+                                              controller: _controllers[i],
+                                              focusNode: _focusNodes[i],
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              textAlign: TextAlign.center,
+                                              maxLength: 1,
+                                              style: TextStyle(
+                                                fontSize: Responsive.scale(
+                                                  context,
+                                                  20,
+                                                ),
+                                                fontWeight: FontWeight.w600,
                                               ),
-                                              borderSide: BorderSide(
-                                                color: Colors.grey.shade300,
+                                              decoration: InputDecoration(
+                                                counterText: '',
+                                                filled: true,
+                                                fillColor: Colors.white,
+                                                contentPadding: EdgeInsets.zero,
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  borderSide: BorderSide(
+                                                    color: Colors.grey.shade300,
+                                                  ),
+                                                ),
                                               ),
+                                              onChanged: (v) =>
+                                                  onDigitChanged(v, i),
                                             ),
                                           ),
-                                          onChanged: (v) => _onDigitChanged(v, i),
-                                        ),
+                                        );
+                                      }),
+                                    ),
+                                    SizedBox(
+                                      height: Responsive.scale(context, 12),
+                                    ),
+                                    Text(
+                                      'Enter the code you received via SMS',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: Responsive.scale(context, 14),
                                       ),
-                                    );
-                                  }),
+                                    ),
+                                  ],
                                 ),
-
-                                SizedBox(height: Responsive.scale(context, 12)),
-                                Text(
-                                  'Enter the code you received via SMS',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: Responsive.scale(context, 14),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-
-                      const Spacer(),
 
                       Column(
                         children: [
@@ -205,7 +196,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                   ? () {
                                       Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
-                                          builder: (_) =>  MyHubHome(),
+                                          builder: (_) => MyHubHome(),
                                         ),
                                       );
                                     }

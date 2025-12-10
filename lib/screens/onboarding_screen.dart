@@ -5,7 +5,7 @@ import '../utils/responsive.dart';
 import 'signin_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -25,8 +25,92 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (!mounted) return;
 
     // Navigate to SignInScreen after loader
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const SignInScreen()),
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const SignInScreen()));
+  }
+
+  Widget _buildOnboardingContent(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+      child: Column(
+        children: [
+          SizedBox(height: Responsive.hp(context, 0.52)),
+
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Experience\nthe Next Gen',
+              style: TextStyle(
+                fontSize: Responsive.scale(context, 44),
+                fontWeight: FontWeight.w800,
+                color: Colors.black,
+                height: 1.02,
+              ),
+            ),
+          ),
+
+          SizedBox(height: Responsive.scale(context, 18)),
+
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Search smarter',
+                  style: TextStyle(
+                    fontSize: Responsive.scale(context, 18),
+                    color: const Color(0xFF6D6D6D),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Order faster',
+                  style: TextStyle(
+                    fontSize: Responsive.scale(context, 18),
+                    color: const Color(0xFF6D6D6D),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Book anything with AI',
+                  style: TextStyle(
+                    fontSize: Responsive.scale(context, 18),
+                    color: const Color(0xFF6D6D6D),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const Spacer(),
+
+          SizedBox(
+            width: double.infinity,
+            height: Responsive.scale(context, 58),
+            child: ElevatedButton(
+              onPressed: _onLetsGoPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1E77C9),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0),
+                ),
+                elevation: 2,
+              ),
+              child: Text(
+                "Let's Go",
+                style: TextStyle(
+                  fontSize: Responsive.scale(context, 18),
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: Responsive.scale(context, 18)),
+        ],
+      ),
     );
   }
 
@@ -37,108 +121,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: Stack(
         children: [
           // Background animator filling the whole screen
-          Positioned.fill(
-            child: BackgroundAnimator(
-              frameDuration: const Duration(milliseconds: 400),
-              expand: true,
-              fit: BoxFit.cover,
-            ),
-          ),
+          const Positioned.fill(child: BackgroundAnimator()),
 
-          // Foreground content
-          SafeArea(
-            bottom: true,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-              child: Column(
-                children: [
-                  SizedBox(height: Responsive.hp(context, 0.52)),
-
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Experience\nthe Next Gen',
-                      style: TextStyle(
-                        fontSize: Responsive.scale(context, 44),
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black,
-                        height: 1.02,
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: Responsive.scale(context, 18)),
-
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Search smarter',
-                          style: TextStyle(
-                            fontSize: Responsive.scale(context, 18),
-                            color: const Color(0xFF6D6D6D),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Order faster',
-                          style: TextStyle(
-                            fontSize: Responsive.scale(context, 18),
-                            color: const Color(0xFF6D6D6D),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Book anything with AI',
-                          style: TextStyle(
-                            fontSize: Responsive.scale(context, 18),
-                            color: const Color(0xFF6D6D6D),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: Responsive.scale(context, 58),
-                    child: ElevatedButton(
-                      onPressed: _onLetsGoPressed,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1E77C9),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0),
-                        ),
-                        elevation: 2,
-                      ),
-                      child: Text(
-                        "Let's Go",
-                        style: TextStyle(
-                          fontSize: Responsive.scale(context, 18),
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: Responsive.scale(context, 18)),
-                ],
-              ),
-            ),
-          ),
-
-          // Full-screen loader overlay
-          if (isLoading)
-            Positioned.fill(
-              child: AnimatedLoader(
-                fullScreen: true,
-                frameDuration: const Duration(milliseconds: 500),
-              ),
-            ),
+          // Foreground content or loader
+          if (!isLoading)
+            SafeArea(bottom: true, child: _buildOnboardingContent(context))
+          else
+            const Positioned.fill(child: AnimatedLoader()),
         ],
       ),
     );

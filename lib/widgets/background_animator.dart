@@ -1,71 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:image_sequence_animator/image_sequence_animator.dart';
 
-/// A reusable background animator that plays an image sequence.
+class BackgroundAnimator extends StatefulWidget {
+  const BackgroundAnimator({super.key});
 
-class BackgroundAnimator extends StatelessWidget {
-  final List<String>? fullPaths;
-  final String folderName;
-  final String fileName;
-  final int suffixStart;
-  final int suffixCount;
-  final String fileFormat;
-  final int frameCount;
-  final Duration frameDuration;
-  final bool isLooping;
-  final bool isAutoPlay;
-  final BoxFit fit;
-  final bool expand; // whether to expand to fill parent
+  @override
+  State<BackgroundAnimator> createState() => _BackgroundAnimatorState();
+}
 
-  const BackgroundAnimator({
-    Key? key,
-    this.fullPaths,
-    this.folderName = 'assets/background',
-    this.fileName = 'bg',
-    this.suffixStart = 1,
-    this.suffixCount = 1,
-    this.fileFormat = 'png',
-    this.frameCount = 4,
-    this.frameDuration = const Duration(milliseconds: 400),
-    this.isLooping = true,
-    this.isAutoPlay = true,
-    this.fit = BoxFit.cover,
-    this.expand = true,
-  }) : super(key: key);
+class _BackgroundAnimatorState extends State<BackgroundAnimator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  final List<String> frames = [
+    "assets/background/bg1.png",
+    "assets/background/bg2.png",
+    "assets/background/bg3.png",
+    "assets/background/bg4.png",
+  ];
+
+  int currentIndex = 0;
+  int nextIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize controller
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200), // slow & smooth
+    );
+
+    // Fade animation
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    // Loop animation
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          currentIndex = nextIndex;
+          nextIndex = (nextIndex + 1) % frames.length;
+        });
+        _controller.forward(from: 0.0);
+      }
+    });
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ms = frameDuration.inMilliseconds > 0 ? frameDuration.inMilliseconds : 100;
-    final fps = 1000.0 / ms;
-
-    final animator = ImageSequenceAnimator(
-      folderName,
-      fileName,
-      suffixStart,
-      suffixCount,
-      fileFormat,
-      frameCount.toDouble(),
-      fullPaths: fullPaths,
-      fps: fps,
-      isLooping: isLooping,
-      isAutoPlay: isAutoPlay,
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(frames[currentIndex], fit: BoxFit.cover),
+            Opacity(
+              opacity: _animation.value,
+              child: Image.asset(frames[nextIndex], fit: BoxFit.cover),
+            ),
+          ],
+        );
+      },
     );
-
-    Widget child = animator;
-
-    // If expand is true, scale the animator to cover its parent area.
-    if (expand) {
-      child = SizedBox.expand(
-        child: FittedBox(
-          fit: fit,
-          alignment: Alignment.center,
-          child: SizedBox(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height, child: animator),
-        ),
-      );
-    } else {
-      child = FittedBox(fit: fit, alignment: Alignment.center, child: animator);
-    }
-
-    return child;
   }
 }
